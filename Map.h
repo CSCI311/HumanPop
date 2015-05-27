@@ -10,7 +10,7 @@ using namespace std;
 class Map
 {
 public:
-    Level();
+    Map();
 
     void load(string fileName);
     void print();

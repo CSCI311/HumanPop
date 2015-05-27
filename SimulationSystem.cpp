@@ -22,7 +22,7 @@ void SimulationSystem::runSimulation() {
 		_map.setNumPrints(1);
         //print the map
 				
-		_map.updateAgents(_agent);
+	//	_map.updateAgent(agent);
 
     }
 }

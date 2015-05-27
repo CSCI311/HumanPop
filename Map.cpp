@@ -61,8 +61,6 @@ void Map::load(string fileName) {
            
 			case 'x': //All the tiles that dont need extra processing, in this case, walls and air
            
-			case '.':
-
                 //Doesnt need to do anthing, just break.
                 break;
             default: //If we get here, that means we haven't registered the tile, so print out a warning
@@ -104,8 +102,4 @@ char Map::getTile(int x, int y) {
 //sets a tile on the map
 void Map::setTile(int x, int y, char tile) {
     _mapData[y][x] = tile;
-}
-
-
-
 }
