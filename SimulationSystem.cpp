@@ -7,7 +7,9 @@ SimulationSystem::SimulationSystem(string mapFileName){
     
     //Initialize the Agent properties.
    
+	_map.load(mapFileName);
   
+    printf("%s Map Loaded!\n", mapFileName.c_str());
     system("PAUSE");
 }
 
@@ -24,4 +26,3 @@ void SimulationSystem::runSimulation() {
 
     }
 }
-
