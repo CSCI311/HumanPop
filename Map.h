@@ -7,7 +7,7 @@ using namespace std;
 
 //The level stores the data for the level and the agent
 
-class Level
+class Map
 {
 public:
     Level();
