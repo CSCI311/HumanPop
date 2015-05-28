@@ -7,6 +7,8 @@
 #include "Cell.h"
 #include "SimulationSystem.h"
 
+class SimulationSystem;
+
 namespace Ui {
 class MainWindow;
 }
@@ -19,12 +21,17 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+    void deleteCell(Cell*);
+    void addCell(Cell*);
+
 private:
     Ui::MainWindow *ui;
 
     void loadMap();
     QGraphicsScene* scene;
     SimulationSystem* SimSys;
+
+
 
 private slots:
     void updateSim();

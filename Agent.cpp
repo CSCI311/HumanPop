@@ -26,7 +26,7 @@ void Agent::paint(QPainter *painter, const QStyleOptionGraphicsItem *item, QWidg
     Q_UNUSED(item);
 
     if(_population < 2000)
-        painter->fillRect(QRectF(1, 1, 9, 9), QColor(150,100,100));
+        painter->fillRect(QRectF(1, 1, 9, 9), QColor(150,0,0));
     else if(_population < 5000)
         painter->fillRect(QRectF(1, 1, 9, 9), QColor(200,0,0));
     else if(_population < 10000)
@@ -44,12 +44,12 @@ void Agent::setPopulation(int population)
 {
     _population = population;
 }
-int Agent::getTechnology() const
+float Agent::getTechnology() const
 {
     return _technology;
 }
 
-void Agent::setTechnology(int technology)
+void Agent::setTechnology(float technology)
 {
     _technology = technology;
 }

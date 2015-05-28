@@ -11,14 +11,14 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    SimSys = new SimulationSystem("map.txt");
+    SimSys = new SimulationSystem("map.txt", this);
 
     loadMap();
     ui->graphicsView->setScene(scene);
 
     QTimer *timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(updateSim()));
-    timer->start(30);
+    timer->start(15);
 }
 
 MainWindow::~MainWindow()
@@ -28,7 +28,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::loadMap()
 {
-    scene = new QGraphicsScene;
+    scene = new QGraphicsScene();
     Map map = SimSys->getMap();
     for(int x = 0; x < map.getWidth() -1; x++ ) {
         for(int y =0; y < map.getHeight(); y++) {
@@ -37,6 +37,18 @@ void MainWindow::loadMap()
             scene->addItem(item);
         }
     }
+}
+
+void MainWindow::addCell(Cell * newCell)
+{
+    QGraphicsItem*  item = newCell;
+    item->setPos(QPointF(newCell->getX()*10, newCell->getY()*10));
+    scene->addItem(item);
+}
+
+void MainWindow::deleteCell(Cell* item)
+{
+    scene->removeItem(item);
 }
 
 void MainWindow::updateSim()

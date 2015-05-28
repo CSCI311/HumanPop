@@ -21,15 +21,15 @@ public:
     int getPopulation() const;
     void setPopulation(int population);
 
-    int getTechnology() const;
-    void setTechnology(int technology);
+    float getTechnology() const;
+    void setTechnology(float technology);
 
 private:
     std::string _name;
 
     //Properties
     int _map;
-    int _technology;
+    float _technology;
     int _population;
     int _resources;
 };

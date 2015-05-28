@@ -16,6 +16,12 @@ public:
 
     char tileType() const;
 
+    int getX() const;
+    void setX(int value);
+
+    int getY() const;
+    void setY(int value);
+
 private:
     int x;
     int y;

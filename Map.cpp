@@ -58,20 +58,20 @@ void Map::load(string fileName) {
             switch (tile) {
 
             case 'o': //humans
-                _cellData[i][j] = new Agent("Human", 'o', 5, 1000, 10, i, j);
+                _cellData[i][j] = new Agent("Human", 'o', 5, 500, 10, j, i);
                 break;
             case 'r': //Resource
-                _cellData[i][j] = new Resource(i,j, 80);
+                _cellData[i][j] = new Resource(j,i, 80);
                 break;
 
             case '-': //All the tiles that dont need extra processing, in this case, walls and air
             case 'x': //All the tiles that dont need extra processing, in this case, walls and air
             case '.':;
-                _cellData[i][j] = new Cell(i,j,tile);
+                _cellData[i][j] = new Cell(j,i,tile);
                 break;
             default: //If we get here, that means we haven't registered the tile, so print out a warning
                 printf("WARNING: Unknown tile %c at %d,%d\n", tile, j, i);
-                _cellData[i][j] = new Cell(i,j,tile);
+                _cellData[i][j] = new Cell(j,i,tile);
                 break;
             }
         }
@@ -148,4 +148,26 @@ int Map::getResources(int x, int y)
     if(resources > 100)
         resources = 100;
     return resources;
+}
+
+Cell *Map::getMigrationCell(int x, int y, int distance)
+{
+    vector<Cell*> plausible;
+    for(int i = x -distance; i > 0 && i < x+distance && i < getWidth(); i++) {
+        for(int j = y -distance; j > 0 && j < y+distance && j < getHeight(); j++) {
+             Cell* currentCell = getCell(i,j);
+             if(currentCell->tileType() == 'x') {
+                 plausible.push_back(currentCell);
+             }
+        }
+    }
+    if(plausible.size() >0)
+        return plausible.at(rand() % plausible.size());
+    else
+        return NULL;
+}
+
+void Map::setCell(int x, int y, Cell *cell)
+{
+    _cellData[y][x] = cell;
 }

@@ -26,6 +26,9 @@ public:
     void setNumPrints(int numPrints) { this->_numPrints = numPrints;  }
 
     int getResources(int x, int y);
+    Cell* getMigrationCell(int x, int y, int distance);
+
+    void setCell(int x, int y, Cell*);
 
 private:
     void processAgent(int targetX, int targetY);

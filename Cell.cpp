@@ -49,5 +49,25 @@ char Cell::tileType() const
 {
     return _type;
 }
+int Cell::getX() const
+{
+    return x;
+}
+
+void Cell::setX(int value)
+{
+    x = value;
+}
+int Cell::getY() const
+{
+    return y;
+}
+
+void Cell::setY(int value)
+{
+    y = value;
+}
+
+
 
 
