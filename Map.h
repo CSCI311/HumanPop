@@ -3,7 +3,8 @@
 #include <string>
 #include "Agent.h"
 
-using namespace std;
+#include <QVector2D>
+
 
 //The level stores the data for the level and the agent
 
@@ -12,25 +13,30 @@ class Map
 public:
     Map();
 
-    void load(string fileName);
+    void load(std::string fileName);
     void print();
-	
-	void updateAgent();
 
     //Getters
     char getTile(int x, int y);
+    Cell* getCell(int x, int y);
+    int getWidth();
+    int getHeight();
     //Setters
     void setTile(int x, int y, char tile);
-    void setNumPrints(int numPrints) { _numPrints = _numPrints;  }
+    void setNumPrints(int numPrints) { this->_numPrints = numPrints;  }
+
+    int getResources(int x, int y);
 
 private:
     void processAgent(int targetX, int targetY);
 
 private:
     // the bottom of the screen with newlines
-    int _numPrints; 
+    int _numPrints;
+    int _width;
+    int _height;
     // Stores the level information
-    vector <string> _mapData;
-    vector <Agent> _agemt;
+    std::vector<std::string> _mapData;
+    std::vector<std::vector<Cell*> > _cellData;
 };
 

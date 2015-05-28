@@ -1,5 +1,5 @@
 #pragma once
-#include "Agent.h"
+//#include "Agent.h"
 #include "Map.h"
 #include <string>
 
@@ -10,7 +10,9 @@ class SimulationSystem
 public:
     SimulationSystem(string mapFileName);
 
-    void runSimulation();
+    void runStep();
+
+    Map& getMap();
 
 private:
     Map _map;
