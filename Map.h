@@ -2,6 +2,7 @@
 #include <vector>
 #include <string>
 #include "Agent.h"
+#include "Resource.h"
 
 #include <QVector2D>
 
@@ -27,6 +28,7 @@ public:
     void setNumPrints(int numPrints) { this->_numPrints = numPrints;  }
 
     int getResources(int x, int y);
+    std::vector<Resource*> getResourceCells(int x, int y, int distance);
     Cell* getMigrationCell(int x, int y, int distance);
 
     void setCell(int x, int y, Cell*);

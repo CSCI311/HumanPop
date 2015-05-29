@@ -3,6 +3,8 @@
 #include <QGraphicsItem>
 #include "Cell.h"
 
+#include "Resource.h"
+
 class Agent : public Cell
 {
 public:
@@ -24,6 +26,10 @@ public:
     float getTechnology() const;
     void setTechnology(float technology);
 
+    std::vector<Resource *>* getResources();
+    void setResources(std::vector<Resource *> resources);
+    float getAvailableResources();
+
 private:
     std::string _name;
 
@@ -31,6 +37,7 @@ private:
     int _map;
     float _technology;
     int _population;
-    int _resources;
+
+    std::vector<Resource*> _resources;
 };
 

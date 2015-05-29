@@ -54,6 +54,16 @@ void Map::loadCellData()
             }
         }
     }
+
+    //Second pass to set Agent resources
+    for (int i = 0; i < _mapData.size(); i++) {
+        for (int j = 0; j < _mapData[i].size(); j++) {
+            if(_cellData[i][j]->tileType() == 'o') {
+                Agent* agentCell = (Agent*)_cellData[i][j];
+                agentCell->setResources(getResourceCells(j,i,8));
+            }
+        }
+    }
 }
 
 void Map::load(string fileName) {
@@ -157,11 +167,13 @@ int Map::getResources(int x, int y)
     int resources = 0;
     int range = 10;
     for(int i = x -range; i > 0 && i < x+range && i < getWidth(); i++) {
+        if(resources > 100)
+            break;
         for(int j = y -range; j > 0 && j < y+range && j < getHeight(); j++) {
             Cell* currentCell = getCell(i,j);
             if(currentCell->tileType() == 'r') {
-                if(Resource* currentRCell = dynamic_cast<Resource*>(currentCell)) {
-                    float distanceFactor = 1.0 - sqrt(pow(x - i,2) + pow(y-j,2))/range;
+                if(Resource* currentRCell = (Resource*)currentCell) {
+                    float distanceFactor = 1.2 - sqrt(pow(x - i,2) + pow(y-j,2))/range;
                     distanceFactor = distanceFactor < 0 ? 0 : distanceFactor;
                     int cellResources = currentRCell->resources()*distanceFactor;
                     resources += cellResources;
@@ -170,6 +182,8 @@ int Map::getResources(int x, int y)
                         currentRCell->setResources(currentRCell->resources() - currentRCell->resources()*0.05*distanceFactor);
                         currentRCell->update();
                     }
+                    if(resources > 100)
+                        break;
                 }
             }
         }
@@ -177,6 +191,20 @@ int Map::getResources(int x, int y)
     if(resources > 100)
         resources = 100;
     return resources;
+}
+
+std::vector<Resource *> Map::getResourceCells(int x, int y, int distance)
+{
+    vector<Resource *> results;
+    for(int i = x -distance; i > 0 && i < x+distance && i < getWidth(); i++) {
+        for(int j = y -distance; j > 0 && j < y+distance && j < getHeight(); j++) {
+             Cell* currentCell = getCell(i,j);
+             if(currentCell->tileType() == 'r') {
+                 results.push_back((Resource*)currentCell);
+             }
+        }
+    }
+    return results;
 }
 
 Cell *Map::getMigrationCell(int x, int y, int distance)
