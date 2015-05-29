@@ -14,6 +14,7 @@ public:
     Map();
 
     void load(std::string fileName);
+    void load(QImage image);
     void print();
 
     //Getters
@@ -30,6 +31,7 @@ public:
 
     void setCell(int x, int y, Cell*);
 
+    void loadCellData();
 private:
     void processAgent(int targetX, int targetY);
 

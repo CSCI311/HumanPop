@@ -10,14 +10,14 @@ void Resource::paint(QPainter *painter, const QStyleOptionGraphicsItem *item, QW
 {
     Q_UNUSED(widget);
     Q_UNUSED(item);
-    painter->fillRect(QRectF(1, 1, 9, 9), QColor(0,_resources*2,0));
+    painter->fillRect(QRectF(1, 1, 9, 9), QColor(0,_resources*2 + 50,0));
 }
-int Resource::resources() const
+float Resource::resources() const
 {
     return _resources;
 }
 
-void Resource::setResources(int resources)
+void Resource::setResources(float resources)
 {
     //Ensure resources does not get out of bounds.
     if(resources < 0)

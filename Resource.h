@@ -11,11 +11,11 @@ public:
     Resource(int x, int y, int resources);
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *item, QWidget *widget) Q_DECL_OVERRIDE;
 
-    int resources() const;
-    void setResources(int resources);
+    float resources() const;
+    void setResources(float resources);
 
 private:
-    int _resources;
+    float _resources;
 };
 
 #endif // RESOURCE_H

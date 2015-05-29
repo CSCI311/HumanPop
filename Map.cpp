@@ -8,6 +8,8 @@
 #include "Agent.h"
 #include "Resource.h"
 
+#include <qmath.h>
+
 using namespace std;
 
 //Constructor
@@ -17,33 +19,9 @@ Map::Map() {
 
 //This loads a map from file
 
-void Map::load(string fileName) {
-
-    //Loads the map
-    ifstream file;
-
-    //Open the file and quit if it fails to open
-    file.open(fileName.c_str());
-    if (file.fail()) {
-        perror(fileName.c_str());
-    }
-
-    string line;
-
-    //Loop through the entire file, getting each row and
-    //putting it in the line string.
-    while (getline(file, line)) {
-        if(line.size() > 0)
-            //Push the current line onto the _mapData array
-            _mapData.push_back(line);
-    }
-
-    //Close the file so we arent keeping open for longer than we need to
-    file.close();
-
-
+void Map::loadCellData()
+{
     char tile;
-
     //Loop through the map and process chars
     _cellData.resize(_mapData.size());
     for (int i = 0; i < _mapData.size(); i++) {
@@ -70,12 +48,60 @@ void Map::load(string fileName) {
                 _cellData[i][j] = new Cell(j,i,tile);
                 break;
             default: //If we get here, that means we haven't registered the tile, so print out a warning
-                printf("WARNING: Unknown tile %c at %d,%d\n", tile, j, i);
+                printf("WARNING: Unknown tile %c at x:%d, y:%d\n", tile, j, i);
                 _cellData[i][j] = new Cell(j,i,tile);
                 break;
             }
         }
     }
+}
+
+void Map::load(string fileName) {
+
+    //Loads the map
+    ifstream file;
+
+    //Open the file and quit if it fails to open
+    file.open(fileName.c_str());
+    if (file.fail()) {
+        perror(fileName.c_str());
+    }
+
+    string line;
+
+    //Loop through the entire file, getting each row and
+    //putting it in the line string.
+    while (getline(file, line)) {
+        if(line.size() > 0)
+            //Push the current line onto the _mapData array
+            _mapData.push_back(line);
+    }
+
+    //Close the file so we arent keeping open for longer than we need to
+    file.close();
+    loadCellData();
+}
+
+void Map::load(QImage image)
+{
+    _mapData.resize(image.height());
+    for(int y = 0; y < image.height(); y++) {
+        _mapData[y].resize(image.width());
+        for(int x =0; x < image.width(); x++) {
+            QRgb pixel = image.pixel(x,y);
+            if(pixel == QColor(0,0,0).rgb())
+                _mapData[y][x] = 'x';
+            else if(pixel == QColor(255,255,255).rgb())
+                _mapData[y][x] = '.';
+            else if(pixel == QColor(0,255,0).rgb())
+                _mapData[y][x] = 'r';
+            else if(pixel == QColor(255,0,0).rgb())
+                _mapData[y][x] = 'o';
+            else
+                _mapData[y][x] = '#';
+        }
+    }
+    loadCellData();
 }
 
 //Prints out the map.
@@ -129,16 +155,19 @@ int Map::getResources(int x, int y)
     //3 is range. Should base of tech laters TODO: .
 
     int resources = 0;
-    for(int i = x -3; i > 0 && i < x+3 && i < getWidth(); i++) {
-        for(int j = y -3; j > 0 && j < y+3 && j < getHeight(); j++) {
+    int range = 10;
+    for(int i = x -range; i > 0 && i < x+range && i < getWidth(); i++) {
+        for(int j = y -range; j > 0 && j < y+range && j < getHeight(); j++) {
             Cell* currentCell = getCell(i,j);
             if(currentCell->tileType() == 'r') {
                 if(Resource* currentRCell = dynamic_cast<Resource*>(currentCell)) {
-                    int cellResources = currentRCell->resources();
+                    float distanceFactor = 1.0 - sqrt(pow(x - i,2) + pow(y-j,2))/range;
+                    distanceFactor = distanceFactor < 0 ? 0 : distanceFactor;
+                    int cellResources = currentRCell->resources()*distanceFactor;
                     resources += cellResources;
 
                     if(cellResources > 0) {
-                        currentRCell->setResources(currentRCell->resources() - currentRCell->resources()*0.01);
+                        currentRCell->setResources(currentRCell->resources() - currentRCell->resources()*0.05*distanceFactor);
                         currentRCell->update();
                     }
                 }

@@ -11,14 +11,14 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    SimSys = new SimulationSystem("map.txt", this);
+    SimSys = new SimulationSystem("map.bmp", this);
 
     loadMap();
     ui->graphicsView->setScene(scene);
 
     QTimer *timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(updateSim()));
-    timer->start(15);
+    timer->start(5);
 }
 
 MainWindow::~MainWindow()
