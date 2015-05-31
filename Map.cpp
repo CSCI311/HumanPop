@@ -11,10 +11,19 @@
 #include <qmath.h>
 
 using namespace std;
+#define NUM_NN 8 //Number of nearest points.
+#define MAX_PTS 2048 //Maximum number of data points.
 
 //Constructor
 Map::Map() {
     _numPrints = 0;
+
+    _queryPoint = annAllocPt(2);
+    _dataPts = annAllocPts(2048, 2);
+    _nearestIndex = new ANNidx[NUM_NN];
+    _dists = new ANNdist[NUM_NN];
+
+    _resPts = 0;
 }
 
 //This loads a map from file
@@ -24,11 +33,11 @@ void Map::loadCellData()
     char tile;
     //Loop through the map and process chars
     _cellData.resize(_mapData.size());
-    for (int i = 0; i < _mapData.size(); i++) {
+    for (unsigned int i = 0; i < _mapData.size(); i++) {
         _cellData[i].resize(_mapData[i].size());
 
         //Loop through each letter in row i
-        for (int j = 0; j < _mapData[i].size(); j++) {
+        for (unsigned int j = 0; j < _mapData[i].size(); j++) {
             //This is the current tile we are looking at
             tile = _mapData[i][j];
 
@@ -36,14 +45,17 @@ void Map::loadCellData()
             switch (tile) {
 
             case 'o': //humans
-                _cellData[i][j] = new Agent("Human", 'o', 5, 500, 10, j, i);
+                _cellData[i][j] = new Agent("Human", 'o', 10, 500, 10, j, i);
                 break;
             case 'r': //Resource
                 _cellData[i][j] = new Resource(j,i, 80);
+                _dataPts[_resPts][0] = ANNcoord(j);
+                _dataPts[_resPts][1] = ANNcoord(i);
+                _resPts++;
                 break;
 
-            case '-': //All the tiles that dont need extra processing, in this case, walls and air
-            case 'x': //All the tiles that dont need extra processing, in this case, walls and air
+            case '-':
+            case 'x':
             case '.':;
                 _cellData[i][j] = new Cell(j,i,tile);
                 break;
@@ -55,11 +67,14 @@ void Map::loadCellData()
         }
     }
 
+    _kdTree = new ANNkd_tree(_dataPts, _resPts, 2);
+
     //Second pass to set Agent resources
     for (int i = 0; i < _mapData.size(); i++) {
         for (int j = 0; j < _mapData[i].size(); j++) {
             if(_cellData[i][j]->tileType() == 'o') {
                 Agent* agentCell = (Agent*)_cellData[i][j];
+
                 agentCell->setResources(getResourceCells(j,i,8));
             }
         }
@@ -196,29 +211,40 @@ int Map::getResources(int x, int y)
 std::vector<Resource *> Map::getResourceCells(int x, int y, int distance)
 {
     vector<Resource *> results;
-    for(int i = x -distance; i > 0 && i < x+distance && i < getWidth(); i++) {
-        for(int j = y -distance; j > 0 && j < y+distance && j < getHeight(); j++) {
-             Cell* currentCell = getCell(i,j);
-             if(currentCell->tileType() == 'r') {
-                 results.push_back((Resource*)currentCell);
-             }
+    _queryPoint[0] = x;
+    _queryPoint[1] = y;
+    _kdTree->annkSearch(_queryPoint, NUM_NN, _nearestIndex, _dists);
+    for(int nnIdx = 0; nnIdx < NUM_NN; nnIdx++) {
+        if(_dists[nnIdx] < distance) {
+            int rx = _dataPts[_nearestIndex[nnIdx]][0];
+            int ry = _dataPts[_nearestIndex[nnIdx]][1];
+            results.push_back((Resource*)_cellData[ry][rx]);
         }
     }
+
+//    for(int i = x -distance; i > 0 && i < x+distance && i < getWidth(); i++) {
+//        for(int j = y -distance; j > 0 && j < y+distance && j < getHeight(); j++) {
+//            Cell* currentCell = getCell(i,j);
+//            if(currentCell->tileType() == 'r') {
+//                results.push_back((Resource*)currentCell);
+//            }
+//        }
+//    }
     return results;
 }
 
 Cell *Map::getMigrationCell(int x, int y, int distance)
 {
     vector<Cell*> plausible;
-    for(int i = x -distance; i > 0 && i < x+distance && i < getWidth(); i++) {
+    for(int i = x - distance; i > 0 && i < x+distance && i < getWidth(); i++) {
         for(int j = y -distance; j > 0 && j < y+distance && j < getHeight(); j++) {
-             Cell* currentCell = getCell(i,j);
-             if(currentCell->tileType() == 'x') {
-                 plausible.push_back(currentCell);
-             }
+            Cell* currentCell = getCell(i,j);
+            if(currentCell->tileType() == 'x') {
+                plausible.push_back(currentCell);
+            }
         }
     }
-    if(plausible.size() >0)
+    if(plausible.size() > 0)
         return plausible.at(rand() % plausible.size());
     else
         return NULL;

@@ -17,8 +17,25 @@ public:
 
     Map& getMap();
 
+    int getTimeStep() const;
+    void setTimeStep(int timeStep);
+
+    double getBirthRate() const;
+    void setBirthRate(double birthRate);
+
+    double getDeathRate() const;
+    void setDeathRate(double deathRate);
+
+    unsigned long getTotal() const;
+
 private:
     Map _map;
     MainWindow* _app;
+    int _timeStep;
+
+    double _birthRate;
+    double _deathRate;
+
+    long unsigned int _total;
 };
 

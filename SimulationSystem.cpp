@@ -18,6 +18,10 @@ SimulationSystem::SimulationSystem(string mapFileName, MainWindow* main){
     _app = main;
 
     printf("%s Map Loaded!\n", mapFileName.c_str());
+    _timeStep = 1;
+    _birthRate = 0.0019;
+    _deathRate = 0.0009;
+    _total = 0;
 }
 
 void SimulationSystem::runStep()
@@ -25,9 +29,9 @@ void SimulationSystem::runStep()
     Cell* currentCell = NULL;
     int width = _map.getWidth();
     int height = _map.getHeight();
-    long int totalPop = 0;
-    static int year = 0;
-    year++;
+    unsigned long int totalPop = 0;
+    static unsigned long long int year = 0;
+    year += _timeStep;
     for(int x = 0; x < width; x++) {
         for(int y = 0; y < height; y++) {
             currentCell = _map.getCell(x,y);
@@ -37,16 +41,22 @@ void SimulationSystem::runStep()
                 Agent * agent = (Agent*)currentCell;
 
                 //Calculate population growth.
-                int pop = agent->getPopulation();
-                int resourcesAvailable = agent->getAvailableResources()*(0.5 + agent->getTechnology()/100.0);
-                float growthRate = (resourcesAvailable/100.0) * 0.019;
-                pop += growthRate*pop;
+                long long int pop = agent->getPopulation();
+                long long int prevPop = agent->getPopulation();
+                double resourcesAvailable = agent->getAvailableResources(_timeStep)*(0.49 + agent->getTechnology()/200.0);
+                double growthRate = (2.0*resourcesAvailable/100.0) * _birthRate;
+                pop += prevPop*pow(1.0+growthRate,_timeStep);
+                if(pop/prevPop > 2)
+                    cout <<"Doubling in pop" << endl;
 
                 //Calculate population deaths.
-                float tech = agent->getTechnology()/100.0;
-                float techFactor = 1.0/(0.5 + tech);
-                float resourceFactor = 1.1 - resourcesAvailable/100.0;
-                pop -= 0.002*pop*techFactor + 0.002*pop*resourceFactor;
+                double tech = agent->getTechnology()/100.0;
+                double techFactor = 1.0 - tech;
+                double resourceFactor = 1.0 - resourcesAvailable/100.0;
+                double deathrate = _deathRate*(techFactor + resourceFactor);
+                pop -= prevPop*pow(1.0+deathrate,_timeStep);
+                if(pop < 0)
+                    pop = 0;
 
                 agent->setPopulation(pop);
                 //cout << "Population: " << agent->getPopulation() << endl;
@@ -54,9 +64,9 @@ void SimulationSystem::runStep()
 
                 //Phase 2
                 //Population limits and migration
-                int limit = pow((1+tech),10)*500*(1.3 + resourcesAvailable/100.0);
+                double limit = pow((1.0+tech),13.0)*300.0*(1.3 + resourcesAvailable/100.0);
                 if(pop > limit) {
-                    Cell* target = _map.getMigrationCell(x,y,10);
+                    Cell* target = _map.getMigrationCell(x,y,16);
                     if(target != NULL) {
                         int target_x = target->getX();
                         int target_y = target->getY();
@@ -64,20 +74,22 @@ void SimulationSystem::runStep()
                         delete target;
                         target = NULL;
 
-                        Agent* replacement = new Agent("human2", 'o', agent->getTechnology(), pop/4, 200, target_x, target_y);
-                        replacement->setResources(_map.getResourceCells(target_x, target_y, 15));
+                        Agent* replacement = new Agent("human2", 'o', agent->getTechnology(), pop*0.5, 200, target_x, target_y);
+                        replacement->setResources(_map.getResourceCells(target_x, target_y, 4));
+                        replacement->setResRange(8);
                         _app->addCell(replacement);
                         _map.setCell(target_x, target_y, replacement);
-                        agent->setPopulation(pop*(3.0/4.0));
+                        agent->setPopulation(pop*0.5);
                         agent->update();
-                        totalPop += pop*(3.0/4.0);
+                        totalPop += pop*0.5;
                     }
+                    agent->setPopulation(pop*0.5);
                 }
                 else
                     totalPop += pop;
 
                 //Phase 3
-                agent->setTechnology(agent->getTechnology()*1.0005);
+                agent->setTechnology(agent->getTechnology()*pow((1+0.00005),_timeStep));
 
                 //Phase 4,
                 if(pop <= 1) {
@@ -91,22 +103,56 @@ void SimulationSystem::runStep()
                     _app->addCell(emptyLand);
                     _map.setCell(old_x, old_y, emptyLand);
                     emptyLand->update();
-
                 }
             }
             else if(currentCell->tileType() == 'r') {
                 Resource* resource = (Resource*)currentCell;
                 int resources = resource->resources();
-                //15% resource renewal rate.
-                resource->setResources(resources + resources*0.15 + 3);
+                //20% resource renewal rate.
+                resources += (resources*0.2 + 5)*_timeStep;
+                resource->setResources(resources);
                 resource->update();
             }
         }
     }
-    cout << "Year: " << year << " Total Population: " << totalPop << endl;
+    _total = totalPop;
 }
 
 Map &SimulationSystem::getMap()
 {
     return _map;
 }
+int SimulationSystem::getTimeStep() const
+{
+    return _timeStep;
+}
+
+void SimulationSystem::setTimeStep(int timeStep)
+{
+    _timeStep = timeStep;
+}
+double SimulationSystem::getBirthRate() const
+{
+    return _birthRate;
+}
+
+void SimulationSystem::setBirthRate(double birthRate)
+{
+    _birthRate = birthRate;
+}
+double SimulationSystem::getDeathRate() const
+{
+    return _deathRate;
+}
+
+void SimulationSystem::setDeathRate(double deathRate)
+{
+    _deathRate = deathRate;
+}
+unsigned long SimulationSystem::getTotal() const
+{
+    return _total;
+}
+
+
+

@@ -13,13 +13,13 @@ Cell::Cell(int x, int y, char type)
 
 QRectF Cell::boundingRect() const
 {
-    return QRectF(0, 0, 10, 10);
+    return QRectF(1, 1, 4, 4);
 }
 
 QPainterPath Cell::shape() const
 {
     QPainterPath path;
-    path.addRect(14, 14, 82, 42);
+    path.addRect(1, 1, 4, 4);
     return path;
 }
 
@@ -28,13 +28,13 @@ void Cell::paint(QPainter *painter, const QStyleOptionGraphicsItem *item, QWidge
     Q_UNUSED(widget);
     Q_UNUSED(item);
     if(_type == '.')
-        painter->fillRect(QRectF(1, 1, 9, 9), Qt::blue);
+        painter->fillRect(QRectF(0, 0, 5, 5), Qt::blue);
     else if(_type == 'x')
-        painter->fillRect(QRectF(1, 1, 9, 9), QColor(20,10,10));
+        painter->fillRect(QRectF(0, 0, 5, 5), QColor(80,40,20));
     else if(_type == 'o')
-        painter->fillRect(QRectF(1, 1, 9, 9), QColor(150,0,0));
+        painter->fillRect(QRectF(0, 0, 5, 5), QColor(150,0,0));
     else
-        painter->fillRect(QRectF(1, 1, 9, 9), QColor(100,100,100));
+        painter->fillRect(QRectF(0, 0, 5, 5), QColor(100,100,100));
 }
 
 void Cell::setType(char type)

@@ -2,14 +2,6 @@
 <ui version="4.0">
  <class>MainWindow</class>
  <widget class="QMainWindow" name="MainWindow">
-  <property name="geometry">
-   <rect>
-    <x>0</x>
-    <y>0</y>
-    <width>1109</width>
-    <height>642</height>
-   </rect>
-  </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
@@ -18,10 +10,138 @@
     <property name="geometry">
      <rect>
       <x>0</x>
-      <y>0</y>
-      <width>1091</width>
-      <height>581</height>
+      <y>-10</y>
+      <width>1041</width>
+      <height>521</height>
      </rect>
+    </property>
+   </widget>
+   <widget class="QSpinBox" name="yearPerStep">
+    <property name="geometry">
+     <rect>
+      <x>200</x>
+      <y>520</y>
+      <width>48</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="maximum">
+     <number>10</number>
+    </property>
+    <property name="value">
+     <number>1</number>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>520</y>
+      <width>161</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Years per simulation step:</string>
+    </property>
+   </widget>
+   <widget class="QDoubleSpinBox" name="birthRate">
+    <property name="geometry">
+     <rect>
+      <x>350</x>
+      <y>520</y>
+      <width>68</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="decimals">
+     <number>4</number>
+    </property>
+    <property name="maximum">
+     <double>0.100000000000000</double>
+    </property>
+    <property name="singleStep">
+     <double>0.001000000000000</double>
+    </property>
+    <property name="value">
+     <double>0.001900000000000</double>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_2">
+    <property name="geometry">
+     <rect>
+      <x>270</x>
+      <y>520</y>
+      <width>81</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Birth Rate</string>
+    </property>
+   </widget>
+   <widget class="QDoubleSpinBox" name="deathRate">
+    <property name="geometry">
+     <rect>
+      <x>530</x>
+      <y>520</y>
+      <width>68</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="decimals">
+     <number>4</number>
+    </property>
+    <property name="singleStep">
+     <double>0.000100000000000</double>
+    </property>
+    <property name="value">
+     <double>0.000900000000000</double>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_3">
+    <property name="geometry">
+     <rect>
+      <x>440</x>
+      <y>520</y>
+      <width>81</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Death rate</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="updateDisplay">
+    <property name="geometry">
+     <rect>
+      <x>930</x>
+      <y>520</y>
+      <width>121</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Update Display</string>
+    </property>
+    <property name="checked">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QLCDNumber" name="lcdNumber">
+    <property name="geometry">
+     <rect>
+      <x>650</x>
+      <y>520</y>
+      <width>251</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="digitCount">
+     <number>10</number>
+    </property>
+    <property name="intValue" stdset="0">
+     <number>2</number>
     </property>
    </widget>
   </widget>
@@ -30,10 +150,21 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1109</width>
+     <width>1064</width>
      <height>19</height>
     </rect>
    </property>
+   <widget class="QMenu" name="menuHuman_Sim">
+    <property name="title">
+     <string>Human Sim</string>
+    </property>
+    <addaction name="separator"/>
+    <addaction name="actionRestart"/>
+    <addaction name="separator"/>
+    <addaction name="separator"/>
+    <addaction name="actionExit"/>
+   </widget>
+   <addaction name="menuHuman_Sim"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">
@@ -44,6 +175,16 @@
    </attribute>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
+  <action name="actionRestart">
+   <property name="text">
+    <string>Restart</string>
+   </property>
+  </action>
+  <action name="actionExit">
+   <property name="text">
+    <string>Exit</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources/>

@@ -6,6 +6,8 @@
 
 #include <QVector2D>
 
+#include "ANN/ANN.h"
+
 
 //The level stores the data for the level and the agent
 
@@ -45,5 +47,11 @@ private:
     // Stores the level information
     std::vector<std::string> _mapData;
     std::vector<std::vector<Cell*> > _cellData;
+    int _resPts; // actual number resource points.
+    ANNpointArray _dataPts;
+    ANNpoint _queryPoint;
+    ANNidxArray _nearestIndex;
+    ANNdistArray _dists;
+    ANNkd_tree* _kdTree;
 };
 

@@ -9,7 +9,7 @@ class Agent : public Cell
 {
 public:
     //Constructor
-    Agent(std::string name, char tile, int technology, int population, int resources, int x, int y);
+    Agent(std::string name, char tile, int technology, unsigned long population, int resources, int x, int y);
 
     //Getters
     void getPosition(int &x, int &y);
@@ -20,23 +20,27 @@ public:
 
 
 
-    int getPopulation() const;
-    void setPopulation(int population);
+    unsigned long getPopulation() const;
+    void setPopulation(unsigned long population);
 
-    float getTechnology() const;
+    double getTechnology() const;
     void setTechnology(float technology);
 
     std::vector<Resource *>* getResources();
     void setResources(std::vector<Resource *> resources);
-    float getAvailableResources();
+    float getAvailableResources(int timePeriod = 1);
+
+    int getResRange() const;
+    void setResRange(int resRange);
 
 private:
     std::string _name;
 
     //Properties
     int _map;
-    float _technology;
-    int _population;
+    double _technology;
+    unsigned long _population;
+    int _resRange;
 
     std::vector<Resource*> _resources;
 };

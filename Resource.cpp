@@ -10,7 +10,7 @@ void Resource::paint(QPainter *painter, const QStyleOptionGraphicsItem *item, QW
 {
     Q_UNUSED(widget);
     Q_UNUSED(item);
-    painter->fillRect(QRectF(1, 1, 9, 9), QColor(0,_resources*2 + 50,0));
+    painter->fillRect(QRectF(0, 0, 5, 5), QColor(0,_resources*2 + 50,0));
 }
 float Resource::resources() const
 {

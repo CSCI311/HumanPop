@@ -35,6 +35,12 @@ private:
 
 private slots:
     void updateSim();
+    void on_yearPerStep_editingFinished(int val);
+    void on_yearPerStep_valueChanged(int val);
+    void on_birthRate_valueChanged(double arg1);
+    void on_updateDisplay_toggled(bool checked);
+
+    void updateResult();
 };
 
 #endif // MAINWINDOW_H
